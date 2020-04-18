@@ -2,15 +2,126 @@
 <html>
 
 <head>
-    <script type="text/javascript" src="../lib/d3.v5.min.js"></script>
-    <Script type="text/javascript" src="./app.js"></Script>
+    <script type="text/javascript" src="./lib/d3.v5.min.js"></script>
+    <script type="text/javascript" src="./lib/knockout.js"></Script>
+    <script type="text/javascript" src="./app.js"></Script>
     <link rel="stylesheet" href="app.css" />
-    
+    <link rel="stylesheet" href="./lib/bootstrap-4.4.1-dist/css/bootstrap.min.css" />
+    <script type="text/javascript" src="./lib/jqlite.js"></script>
+    <script type="text/javascript" src="./lib/bootstrap-4.4.1-dist/js/bootstrap.bundle.js"></script>
 </head>
 
 <body>
-<h2>FAERS Demographic Analysis</h2>
-    <svg id="plot" width="1000" height="800"></svg>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">FAERS Anaysis</a><strong>15. Project Team Northeast</strong>
+        <div style="padding-left:1rem;">Katharine Adams, Victor Brooks, Andrew Perrins, Amita Anton Raju, Pauline Sho</div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
+
+                <!-- Tableau embedding code -->
+                <h1> Tableau Analysis</h1>
+
+                <!-- <div class='tableauPlaceholder' id='viz1587190179918' style='position: relative'><noscript><a
+                            href='#'><img alt=' '
+                                src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Re&#47;RelationBetweenDrug_Adverse_EffectsBasedOnPatientDemogaraphics&#47;DrugAdverseEffects&#47;1_rss.png'
+                                style='border: none' /></a></noscript><object class='tableauViz' style='display:none;'>
+                        <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+                        <param name='embed_code_version' value='3' />
+                        <param name='site_root' value='' />
+                        <param name='name'
+                            value='RelationBetweenDrug_Adverse_EffectsBasedOnPatientDemogaraphics&#47;DrugAdverseEffects' />
+                        <param name='tabs' value='no' />
+                        <param name='toolbar' value='yes' />
+                        <param name='static_image'
+                            value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Re&#47;RelationBetweenDrug_Adverse_EffectsBasedOnPatientDemogaraphics&#47;DrugAdverseEffects&#47;1.png' />
+                        <param name='animate_transition' value='yes' />
+                        <param name='display_static_image' value='yes' />
+                        <param name='display_spinner' value='yes' />
+                        <param name='display_overlay' value='yes' />
+                        <param name='display_count' value='yes' /></object>
+                </div>
+                <script
+                    type='text/javascript'>                    var divElement = document.getElementById('viz1587190179918'); var vizElement = divElement.getElementsByTagName('object')[0]; if (divElement.offsetWidth > 800) { vizElement.style.width = '100%'; vizElement.style.height = (divElement.offsetWidth * 0.75) + 'px'; } else if (divElement.offsetWidth > 500) { vizElement.style.width = '100%'; vizElement.style.height = (divElement.offsetWidth * 0.75) + 'px'; } else { vizElement.style.width = '100%'; vizElement.style.height = '1377px'; } var scriptElement = document.createElement('script'); scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js'; vizElement.parentNode.insertBefore(scriptElement, vizElement);                </script> -->
+
+
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+        <div class="row" style="margin-top:5rem;">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
+                <h1>D3 Analysis</h1>
+                <p>Motivated by the Tableau cluster visualization, the concept was developed further in D3 to expand on
+                    dimensions and interactivity.
+                    The original objective was to provide insight into what distinguishes the clusters from one another.
+                </p>
+                <button class="btn btn-primary" onclick="vm.run()">Headache Dataset</button>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+
+        <div class="row" style="margin-top:1rem;">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
+                Age bin size (years):
+                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                    <div class="btn-group mr-2" role="group" aria-label="First group">
+                      <button type="button" class="btn btn-secondary" data-bind="css: {active: binSize() == 2}, click: function(){ changeBinSize(2); }">2</button>
+                      <button type="button" class="btn btn-secondary" data-bind="css: {active: binSize() == 5}, click: function(){ changeBinSize(5); }">5</button>
+                      <button type="button" class="btn btn-secondary" data-bind="css: {active: binSize() == 10}, click: function(){ changeBinSize(10); }">10</button>
+                      <button type="button" class="btn btn-secondary" data-bind="css: {active: binSize() == 20}, click: function(){ changeBinSize(20); }">20</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
+                <h2 data-bind="text: datasetName"></h2>
+                <p>
+                    Explore the "Headache" adverse reaction. The age and gender bins reflect incident count
+                    (circle
+                    size) and
+                    reaction severity (darker hues indicate more severe outcomes. In order, the outcome severity
+                    labels
+                    are:
+                    death, life-threatening, disability, hospitalization, and none).
+                </p>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+        <div class="row" style="padding-bottom:5rem;">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-7">
+                <svg id="plot" width="1000" height="750"></svg>
+            </div>
+            <div class="col-3">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Substance</th>
+                            <th scope="col">Percentage contributing</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: associations">
+                        <tr>
+                            <td data-bind="text: name"></td>
+                            <td data-bind="text: value" class="association-percent"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+
+    </div>
 </body>
 
 </html>

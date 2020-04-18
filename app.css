@@ -3,3 +3,17 @@ svg#plot {
     height: 80vh; */
     border: 1px solid grey;
 }
+
+circle.outline {
+    stroke-width: 1;
+    stroke: black;
+    cursor: pointer;
+}
+
+table td{
+    padding:0 !important;
+}
+
+.association-percent{ 
+    text-align:right;
+}
