@@ -26,7 +26,7 @@
                 <!-- Tableau embedding code -->
                 <h1> Tableau Analysis</h1>
 
-                <div class='tableauPlaceholder' id='viz1587190179918' style='position: relative'><noscript><a
+                <!-- <div class='tableauPlaceholder' id='viz1587190179918' style='position: relative'><noscript><a
                             href='#'><img alt=' '
                                 src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Re&#47;RelationBetweenDrug_Adverse_EffectsBasedOnPatientDemogaraphics&#47;DrugAdverseEffects&#47;1_rss.png'
                                 style='border: none' /></a></noscript><object class='tableauViz' style='display:none;'>
@@ -46,7 +46,7 @@
                         <param name='display_count' value='yes' /></object>
                 </div>
                 <script
-                    type='text/javascript'>                    var divElement = document.getElementById('viz1587190179918'); var vizElement = divElement.getElementsByTagName('object')[0]; if (divElement.offsetWidth > 800) { vizElement.style.width = '100%'; vizElement.style.height = (divElement.offsetWidth * 0.75) + 'px'; } else if (divElement.offsetWidth > 500) { vizElement.style.width = '100%'; vizElement.style.height = (divElement.offsetWidth * 0.75) + 'px'; } else { vizElement.style.width = '100%'; vizElement.style.height = '1377px'; } var scriptElement = document.createElement('script'); scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js'; vizElement.parentNode.insertBefore(scriptElement, vizElement);                </script>
+                    type='text/javascript'>                    var divElement = document.getElementById('viz1587190179918'); var vizElement = divElement.getElementsByTagName('object')[0]; if (divElement.offsetWidth > 800) { vizElement.style.width = '100%'; vizElement.style.height = (divElement.offsetWidth * 0.75) + 'px'; } else if (divElement.offsetWidth > 500) { vizElement.style.width = '100%'; vizElement.style.height = (divElement.offsetWidth * 0.75) + 'px'; } else { vizElement.style.width = '100%'; vizElement.style.height = '1377px'; } var scriptElement = document.createElement('script'); scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js'; vizElement.parentNode.insertBefore(scriptElement, vizElement);                </script> -->
 
 
             </div>
@@ -106,12 +106,28 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th scope="col">Substance</th>
-                            <th scope="col">Percentage contributing</th>
+                            <th scope="col">Association</th>
+                            <th scope="col">% of cases caused</th>
                         </tr>
+                        <tr style="background-color: black;"> <td colspan="2" style="text-align: center; font-size:small; font-weight: bold; color: white">Males</td></tr>
                     </thead>
-                    <tbody data-bind="foreach: associations">
-                        <tr>
+                    <tbody data-bind="foreach: associationsM">
+                        <tr data-bind="style: {'background-color': color }">
+                            <td data-bind="text: name"></td>
+                            <td data-bind="text: value" class="association-percent"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table">
+                    <thead>
+                        <!-- <tr>
+                            <th scope="col">Association</th>
+                            <th scope="col">% of cases caused</th>
+                        </tr> -->
+                        <tr style="background-color: black"> <td colspan="2" style="text-align: center; font-size:small; font-weight: bold; color: white">Females</td></tr>
+                    </thead>
+                    <tbody data-bind="foreach: associationsF">
+                        <tr data-bind="style: {'background-color': color}">
                             <td data-bind="text: name"></td>
                             <td data-bind="text: value" class="association-percent"></td>
                         </tr>

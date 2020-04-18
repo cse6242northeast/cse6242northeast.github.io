@@ -256,7 +256,7 @@ function bubbleItem(bubbleEl) {
 }
 
 function bubbleClick(sender) {
-    vm.setAssociationFilter(sender.gender, sender.ageBin)
+    vm.setAssociationFilter(sender.ageBin)
 }
 
 function go() {
@@ -275,8 +275,9 @@ let vm;
  */
 class AppVm {
     constructor() {
-        this.displayTop_nCount = 20;
-        this.associations = ko.observableArray();
+        this.displayTop_nCount = 15;
+        this.associationsM = ko.observableArray();
+        this.associationsF = ko.observableArray();
         this.datasetName = "Headache (reaction)";
 
         this.binSize = ko.observable(ageBinSize);
@@ -291,6 +292,10 @@ class AppVm {
         this.binSize(newBinSize);
         ageBinSize = newBinSize;
         go();
+    }
+
+    rowColor(sender) {
+        return 'lightyellow';
     }
 
     run() {
@@ -308,53 +313,92 @@ class AppVm {
         });
     }
 
-    setAssociationFilter(subsetGender, subsetAge) {
+    setAssociationFilter(subsetAge) {
 
         let applyOverData = this.dataset;
-        this.associations.removeAll();
-        if (subsetGender) {
+        this.associationsM.removeAll();
+        this.associationsF.removeAll();
+        if (subsetAge) {
             applyOverData = this.dataset.filter(function (x) {
-                return x.age - (x.age % ageBinSize) == subsetAge && x.sex == subsetGender;
+                return x.age - (x.age % ageBinSize) == subsetAge;
             })
         }
 
-        // a map from "association" (drug/effect) to count
-        let associationCounts = {};
-        applyOverData.forEach(d => {
-            associationCounts[d.activesubstance] = associationCounts[d.activesubstance] === undefined ? 1 : associationCounts[d.activesubstance] + 1;
-        })
+        let maleSubset = applyOverData.filter(x => x.sex === "M");
+        let femaleSubset = applyOverData.filter(x => x.sex === "F");
 
-        // get the top associations (drugs/effects) with the current dataset
-        let top = [];
-        for (let _ in associationCounts) {
-            if (top.length == 0) {
-                top.push({ association: _, count: associationCounts[_] });
+        let maleTopN = assocationsInternal(maleSubset);
+        let femaleTopN = assocationsInternal(femaleSubset);
+
+
+        // Set row colors the same where drugs match between males/females
+        let colScheme = d3.schemePastel1;
+        let usedIndices = 0;
+        for (var i = 0; i < this.displayTop_nCount; i++) {
+            // default to white
+            if (maleTopN.length > i) maleTopN[i].color = "white";
+            if (femaleTopN.length > i && !femaleTopN[i].color) femaleTopN[i].color = "white";
+
+            let match = femaleTopN.find(x => x.name === maleTopN[i].name);
+            if (match) {
+                match.color = colScheme[usedIndices];
+                maleTopN[i].color = colScheme[usedIndices];
+                usedIndices++;
             }
-            else {
-                // if _'s count is > any of the current top 'n', then replace the lowest one
-                for (var i = top.length - 1; i > -1; i--) {
-                    if (associationCounts[_] > top[i].count) {
-                        top.splice(i + 1, 0, { association: _, count: associationCounts[_] }) // replace
-                        if (top.length > this.displayTop_nCount) {
-                            top.shift();
-                        }
-                        break;
-                    }
-                }
-            }
+
+            if (usedIndices >= colScheme.length) break;
         }
 
-        for (var i = top.length - 1; i > -1; i--) {
-            var rounded = Math.round((top[i].count / this.dataset.length) * 10000) / 100;
-            if (rounded.toString().indexOf('.') === -1)
-                rounded = rounded.toString() + ".00"
-            this.associations.push({
-                name: top[i].association,
-                value: `${rounded}%`
-            });
+        for (var i = 0; i < this.displayTop_nCount; i++) {
+            if (maleTopN.length > i)
+                this.associationsM.push(maleTopN[i]);
+            if (femaleTopN.length > i)
+                this.associationsF.push(femaleTopN[i]);
+        }
+
+        // internal fn run once for each gender
+        function assocationsInternal(genderData) {
+            // a map from "association" (drug/effect) to count
+            let associationCounts = {};
+            genderData.forEach(d => {
+                associationCounts[d.activesubstance] = associationCounts[d.activesubstance] === undefined ? 1 : associationCounts[d.activesubstance] + 1;
+            })
+
+            // get the top associations (drugs/effects) with the current dataset
+            let top = [];
+            for (let _ in associationCounts) {
+                if (top.length == 0) {
+                    top.push({ association: _, count: associationCounts[_] });
+                }
+                else {
+                    // if _'s count is > any of the current top 'n', then replace the lowest one
+                    for (var i = top.length - 1; i > -1; i--) {
+                        if (associationCounts[_] > top[i].count) {
+                            top.splice(i + 1, 0, { association: _, count: associationCounts[_] }) // replace
+                            if (top.length > vm.displayTop_nCount) {
+                                top.shift();
+                            }
+                            break;
+                        }
+                    }
+                    if (top.length < vm.displayTop_nCount) top.unshift({ association: _, count: associationCounts[_] });
+                }
+            }
+
+            let result = [];
+            for (var i = top.length - 1; i > -1; i--) {
+                var rounded = Math.round((top[i].count / genderData.length) * 10000) / 100;
+                if (rounded.toString().indexOf('.') === -1)
+                    rounded = rounded.toString() + ".00"
+                result.push({
+                    name: top[i].association,
+                    value: `${rounded}%`
+                });
+            }
+            return result;
         }
     }
 }
 vm = new AppVm();
 
-document.addEventListener("DOMContentLoaded", () => setTimeout(ready, 3500)); // this delay is necessary to prevent the tableau embedding script from interfering with ours
+document.addEventListener("DOMContentLoaded", () => setTimeout(ready, 1)); // this delay is necessary to prevent the tableau embedding script from interfering with ours
