@@ -231,14 +231,14 @@ function plotVerticalBubbles(gender, data, grp) {
         .attr("fill", d => { if (d) return d3.interpolateOrRd(hueScale(d.bubbleColor)); else return "white"; })
         .on('mouseover', function (d) {
             d3.selectAll(pairSelector(d, true)).classed('outline', true);
+            bubbleClick(d);
         })
         .on('mouseout', function (d) {
             d3.selectAll(pairSelector(d, true)).classed('outline', false);
         })
         .attr("group", grp)
         .attr("gender", gender)
-        .attr("index", d => data.indexOf(d))
-        .on('click', bubbleClick);
+        .attr("index", d => data.indexOf(d));
 
     chartContainer.append("text")
         .text(gender)
@@ -401,4 +401,4 @@ class AppVm {
 }
 vm = new AppVm();
 
-document.addEventListener("DOMContentLoaded", () => setTimeout(ready, 3500)); // this delay is necessary to prevent the tableau embedding script from interfering with ours
+document.addEventListener("DOMContentLoaded", () => setTimeout(ready, 5000)); // this delay is necessary to prevent the tableau embedding script from interfering with ours
