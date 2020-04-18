@@ -357,4 +357,4 @@ class AppVm {
 }
 vm = new AppVm();
 
-document.addEventListener("DOMContentLoaded", () => setTimeout(ready, 1)); // this delay is necessary to prevent the tableau embedding script from interfering with ours
+document.addEventListener("DOMContentLoaded", () => setTimeout(ready, 3500)); // this delay is necessary to prevent the tableau embedding script from interfering with ours
