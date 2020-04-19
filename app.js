@@ -93,14 +93,14 @@ let minBubbleSize = minBubbleColor = Number.MAX_VALUE;
  * @param {*} accumulator - the array of aggregated data (within a partition) which holds data aggregated by age bin/bucket
  * @param {*} record - an individual record to add to the bubble aggregation
  */
-function getReducer(forGender) {
+function getReducer(forGender, forGroup) {
     return function reducer(accumulator, record, idx, sourceArr) {
         accumulator = accumulator || []
         let bin = ageBin(record);
         let index = bin / ageBinSize;
 
         if (!accumulator[index])
-            accumulator[index] = { bubbleSize: 0, bubbleColor: 0, ageBin: bin, gender: forGender };
+            accumulator[index] = { bubbleSize: 0, bubbleColor: 0, ageBin: bin, gender: forGender, group: forGroup };
 
         accumulator[index].bubbleSize += 1; // "count" aggregation (number of incidents)
         accumulator[index].bubbleColor += record.seriousness;// / sourceArr.length; // "seriousness" aggregation (avg)
@@ -143,8 +143,8 @@ function dataPrep() {
 
     // aggregations over our dimensions of interest
     for (partition in partitioned) {
-        partitioned[partition].M = partitioned[partition].M.reduce(getReducer("M"), Array(100 / ageBinSize));
-        partitioned[partition].F = partitioned[partition].F.reduce(getReducer("F"), Array(100 / ageBinSize));
+        partitioned[partition].M = partitioned[partition].M.reduce(getReducer("M", partition), Array(100 / ageBinSize));
+        partitioned[partition].F = partitioned[partition].F.reduce(getReducer("F", partition), Array(100 / ageBinSize));
     }
 }
 
@@ -231,10 +231,11 @@ function plotVerticalBubbles(gender, data, grp) {
         .attr("fill", d => { if (d) return d3.interpolateOrRd(hueScale(d.bubbleColor)); else return "white"; })
         .on('mouseover', function (d) {
             d3.selectAll(pairSelector(d, true)).classed('outline', true);
-            bubbleClick(d);
+            vm.setAssociationFilter(d.ageBin, grp);
         })
         .on('mouseout', function (d) {
             d3.selectAll(pairSelector(d, true)).classed('outline', false);
+            vm.setAssociationFilter();
         })
         .attr("group", grp)
         .attr("gender", gender)
@@ -253,10 +254,6 @@ function bubbleItem(bubbleEl) {
     let index = $(bubbleEl).attr('index');
 
     return partitioned[group][gender][index];
-}
-
-function bubbleClick(sender) {
-    vm.setAssociationFilter(sender.ageBin)
 }
 
 function go() {
@@ -281,6 +278,7 @@ class AppVm {
         this.datasetName = "Headache (reaction)";
 
         this.binSize = ko.observable(ageBinSize);
+        this.associationFilter = ko.observable("All ages/genders")
     }
 
     set data(data) {
@@ -313,14 +311,17 @@ class AppVm {
         });
     }
 
-    setAssociationFilter(subsetAge) {
+    setAssociationFilter(subsetAge, group) {
+
+        if (subsetAge) this.associationFilter(`Age bin ${subsetAge}, group '${group}'`)
+        else this.associationFilter("All ages/genders")
 
         let applyOverData = this.dataset;
         this.associationsM.removeAll();
         this.associationsF.removeAll();
         if (subsetAge) {
             applyOverData = this.dataset.filter(function (x) {
-                return x.age - (x.age % ageBinSize) == subsetAge;
+                return x.age - (x.age % ageBinSize) == subsetAge && xPartition(x).label == group;
             })
         }
 
@@ -401,4 +402,4 @@ class AppVm {
 }
 vm = new AppVm();
 
-document.addEventListener("DOMContentLoaded", () => setTimeout(ready, 5000)); // this delay is necessary to prevent the tableau embedding script from interfering with ours
+document.addEventListener("DOMContentLoaded", () => setTimeout(ready, 1)); // this delay is necessary to prevent the tableau embedding script from interfering with ours

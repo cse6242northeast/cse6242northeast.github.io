@@ -15,7 +15,8 @@
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">FAERS Anaysis</a><strong>15. Project Team Northeast</strong>
-        <div style="padding-left:1rem;">Katharine Adams, Victor Brooks, Andrew Perrins, Amita Anton Raju, Pauline Sho</div>
+        <div style="padding-left:1rem;">Katharine Adams, Victor Brooks, Andrew Perrins, Amita Anton Raju, Pauline Sho
+        </div>
     </nav>
 
     <div class="container-fluid">
@@ -26,7 +27,7 @@
                 <!-- Tableau embedding code -->
                 <h1> Tableau Analysis</h1>
 
-                <div class='tableauPlaceholder' id='viz1587190179918' style='position: relative'><noscript><a
+                <!-- <div class='tableauPlaceholder' id='viz1587190179918' style='position: relative'><noscript><a
                             href='#'><img alt=' '
                                 src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Re&#47;RelationBetweenDrug_Adverse_EffectsBasedOnPatientDemogaraphics&#47;DrugAdverseEffects&#47;1_rss.png'
                                 style='border: none' /></a></noscript><object class='tableauViz' style='display:none;'>
@@ -46,7 +47,7 @@
                         <param name='display_count' value='yes' /></object>
                 </div>
                 <script
-                    type='text/javascript'>                    var divElement = document.getElementById('viz1587190179918'); var vizElement = divElement.getElementsByTagName('object')[0]; if (divElement.offsetWidth > 800) { vizElement.style.width = '100%'; vizElement.style.height = (divElement.offsetWidth * 0.75) + 'px'; } else if (divElement.offsetWidth > 500) { vizElement.style.width = '100%'; vizElement.style.height = (divElement.offsetWidth * 0.75) + 'px'; } else { vizElement.style.width = '100%'; vizElement.style.height = '1377px'; } var scriptElement = document.createElement('script'); scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js'; vizElement.parentNode.insertBefore(scriptElement, vizElement);                </script>
+                    type='text/javascript'>                    var divElement = document.getElementById('viz1587190179918'); var vizElement = divElement.getElementsByTagName('object')[0]; if (divElement.offsetWidth > 800) { vizElement.style.width = '100%'; vizElement.style.height = (divElement.offsetWidth * 0.75) + 'px'; } else if (divElement.offsetWidth > 500) { vizElement.style.width = '100%'; vizElement.style.height = (divElement.offsetWidth * 0.75) + 'px'; } else { vizElement.style.width = '100%'; vizElement.style.height = '1377px'; } var scriptElement = document.createElement('script'); scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js'; vizElement.parentNode.insertBefore(scriptElement, vizElement);                </script> -->
 
 
             </div>
@@ -58,25 +59,15 @@
                 <h1>D3 Analysis</h1>
                 <p>Motivated by the Tableau cluster visualization, the concept was developed further in D3 to expand on
                     dimensions and interactivity.
-                    The original objective was to provide insight into what distinguishes the clusters from one another.
+                    We set out with the intent to provide a meaningful, usable way to develop insight into what distinguishes the clusters from one another.
+                    The visualization is fed by a data-set which was run through the scikit-learn KMeans clustring algorithm multiple times (with different
+                    cluster number values). The headache sample set is about 250,000 records. The code aggregates data into their cluster (x-axis), age groups and genders and conveys
+                    incident count (bubble size) and seriousness (darker hues indicate more severe outcomes. In order, the outcome severity
+                    labels
+                    are:
+                    death, life-threatening, disability, hospitalization, and none).
                 </p>
                 <button class="btn btn-primary" onclick="vm.run()">Headache Dataset</button>
-            </div>
-            <div class="col-sm-1"></div>
-        </div>
-
-        <div class="row" style="margin-top:1rem;">
-            <div class="col-sm-1"></div>
-            <div class="col-sm-10">
-                Age bin size (years):
-                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-                    <div class="btn-group mr-2" role="group" aria-label="First group">
-                      <button type="button" class="btn btn-secondary" data-bind="css: {active: binSize() == 2}, click: function(){ changeBinSize(2); }">2</button>
-                      <button type="button" class="btn btn-secondary" data-bind="css: {active: binSize() == 5}, click: function(){ changeBinSize(5); }">5</button>
-                      <button type="button" class="btn btn-secondary" data-bind="css: {active: binSize() == 10}, click: function(){ changeBinSize(10); }">10</button>
-                      <button type="button" class="btn btn-secondary" data-bind="css: {active: binSize() == 20}, click: function(){ changeBinSize(20); }">20</button>
-                    </div>
-                </div>
             </div>
             <div class="col-sm-1"></div>
         </div>
@@ -86,13 +77,8 @@
             <div class="col-sm-10">
                 <h2 data-bind="text: datasetName"></h2>
                 <p>
-                    Explore the "Headache" adverse reaction. The age and gender bins reflect incident count
-                    (circle
-                    size) and
-                    reaction severity (darker hues indicate more severe outcomes. In order, the outcome severity
-                    labels
-                    are:
-                    death, life-threatening, disability, hospitalization, and none).
+                    Explore the "Headache" adverse reaction; you can set the size of the age bins and mouse over any of those groups to see the top-associated 
+                    drugs within that group, broken out by gender in the tables to your right.
                 </p>
             </div>
             <div class="col-sm-1"></div>
@@ -100,21 +86,50 @@
         <div class="row" style="padding-bottom:5rem;">
             <div class="col-sm-1"></div>
             <div class="col-sm-7">
-                <i>If graph doesn't load after a few seconds, hit the "Headache Dataset" button above</i>
+                <p>
+                    <i>If graph doesn't load after a few seconds, hit the "Headache Dataset" button above</i>
+                </p>
+                Age bin size (years):
+                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                    <div class="btn-group mr-2" role="group" aria-label="First group">
+                        <button type="button" class="btn btn-secondary"
+                            data-bind="css: {active: binSize() == 2}, click: function(){ changeBinSize(2); }">2</button>
+                        <button type="button" class="btn btn-secondary"
+                            data-bind="css: {active: binSize() == 5}, click: function(){ changeBinSize(5); }">5</button>
+                        <button type="button" class="btn btn-secondary"
+                            data-bind="css: {active: binSize() == 10}, click: function(){ changeBinSize(10); }">10</button>
+                        <button type="button" class="btn btn-secondary"
+                            data-bind="css: {active: binSize() == 20}, click: function(){ changeBinSize(20); }">20</button>
+                    </div>
+                </div>
                 <svg id="plot" width="1000" height="750"></svg>
             </div>
             <div class="col-3">
+                <h3>Top drug/adverse-effect associations</h3>
+                <p id="tableexplanation">
+                    The tables below show the top drugs contributing to the adverse effect, broken out by gender. drugs
+                    which affect each gender are color coded. This helps us visually identify drugs which have had
+                    disproportionate effects on males and females. It also identifies drugs which exclusively affect
+                    one gender or the other (this is sometimes due to gender-specific treatments, like prostate cancer,
+                    which affect only men). <a style="color:blue; cursor:pointer; text-decoration: underline;" onclick="javascript: $('#tableexplanation').css('display','none');">(hide this text)</a>
+                </p>
+                <span data-bind="text: associationFilter" style="font-weight: bold;">&nbsp;</span>
                 <table class="table">
                     <thead>
                         <tr>
                             <th scope="col">Association</th>
-                            <th scope="col">% of cases caused</th>
+                            <th scope="col">% of related cases</th>
                         </tr>
-                        <tr style="background-color: black;"> <td colspan="2" style="text-align: center; font-size:small; font-weight: bold; color: white">Males</td></tr>
+                        <tr style="background-color: black;">
+                            <td colspan="2"
+                                style="text-align: center; font-size:small; font-weight: bold; color: white">Males</td>
+                        </tr>
                     </thead>
                     <tbody data-bind="foreach: associationsM">
                         <tr data-bind="style: {'background-color': color }">
-                            <td> <a href="#" target="_blank" data-bind="attr: { href:  'https://www.google.com/search?q=' + name }, text: name"></a> </td>
+                            <td> <a href="#" target="_blank"
+                                    data-bind="attr: { href:  'https://www.google.com/search?q=' + name }, text: name"></a>
+                            </td>
                             <td data-bind="text: value" class="association-percent"></td>
                         </tr>
                     </tbody>
@@ -122,11 +137,17 @@
                 <table class="table">
                     <thead>
 
-                        <tr style="background-color: black"> <td colspan="2" style="text-align: center; font-size:small; font-weight: bold; color: white">Females</td></tr>
+                        <tr style="background-color: black">
+                            <td colspan="2"
+                                style="text-align: center; font-size:small; font-weight: bold; color: white">Females
+                            </td>
+                        </tr>
                     </thead>
                     <tbody data-bind="foreach: associationsF">
                         <tr data-bind="style: {'background-color': color}">
-                            <td><a href="#" target="_blank" data-bind="attr: { href:  'https://www.google.com/search?q=' + name }, text: name"></a></td>
+                            <td><a href="#" target="_blank"
+                                    data-bind="attr: { href:  'https://www.google.com/search?q=' + name }, text: name"></a>
+                            </td>
                             <td data-bind="text: value" class="association-percent"></td>
                         </tr>
                     </tbody>
